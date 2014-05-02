@@ -1,14 +1,15 @@
 
 # install gpiper package (we do this every time because the package is currently evolving...)
-install.packages("gpiper_0.1.zip", repos=NULL)
+#install.packages("gpiper_0.1.zip", repos=NULL)
 
 # then load the package
 library(gpiper)
 
 
+baseline_path <- "./data/alewife-baseline.csv"
 
 # get the alewife
-a <- read.csv("Alewife in river - Palkovacs ONLY with nulls removed.csv", as.is=T)
+a <- read.csv(baseline_path, as.is=T)
 a <- data.frame(ID=gsub("_", "", a$Drainage.code), a, stringsAsFactors=F)  # get the column that we want for the IDs in there, remove the underscores.
 
 # drop populations that have fewer than 9 individuals
