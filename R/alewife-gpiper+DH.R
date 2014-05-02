@@ -7,6 +7,7 @@ library(gpiper)
 
 
 baseline_path <- "./data/alewife-baseline.csv"
+lat_long_path <- "./data/alewife-lat-long.txt"
 
 # get the alewife
 a <- read.csv(baseline_path, as.is=T)
@@ -57,18 +58,6 @@ topop<- gsi_simAssTableVariousCutoffs(SA$PopulationOfOrigin, MC$MaxColumn, MC$Ma
 
 
 
-# let us explore aggregating assignments by reporting unit
-rg <- read.table("alewife-3-grps.txt", header=T, row=1)
-rg.f <- factor(rg$RepGroup, levels=unique(rg$RepGroup))
-
-# and get the self assignment to reporting units results
-SA.rg <- gsi_aggScoresByRepUnit(SA, levels(the.pops.f), rg.f)  # here are the assignment values by reporting group
-
-# figure out the max assignments to reporting unit:
-MC.rg <- gsi_simMaxColumnAndPost(SA.rg,-c(1,2))
-
-# then, here are our assignment matrices to reporting unit
-toprg <- gsi_simAssTableVariousCutoffs(SA.rg$PopulationOfOrigin, MC.rg$MaxColumn, MC.rg$MaxPosterior)
 
 
 #Export assignment matrices for additional analyses:
@@ -121,7 +110,7 @@ names(starts) <- names(maxes)  # these are the right hand start points
 fish.x <- .9/sum.maxes   # this is the amount of x space each assigned fish equates to.
 
 #####I think lat.table does not work b/c my file has lats and longs in it; how do I isolate the latitude column?######
-lat.table <- read.table("Alewife lats and longs.txt", header=T, row=1)
+lat.table <- read.table(lat_long_path, header=T, row=1)
 lats <-lat.table[names(starts), 1] # latitudes of rivers as ordered in starts
 
 rg.colors <- c("blue", "violet", "green", "orange")
