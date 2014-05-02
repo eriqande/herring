@@ -38,23 +38,6 @@ a2 <- a2[,-1]
 the.pops <- gsub("[0-9]*", "", rownames(a2))
 the.pops.f <- factor(the.pops, levels=unique(the.pops))
 
-###########################################################################
-# let's look at patterns of non-genotyped loci across populations
-psd <- split(a2, the.pops.f)
-NonGenoTable <- sapply(psd, function(x) {
-	lapply(seq(1,ncol(x), by=2), function(y) mean(c(x[[y]], x[[y+1]])==0) )
-  }
-)
-rownames(NonGenoTable) <- names(a2)[c(T,F)]
-num.non.genod.pops <- apply(NonGenoTable, 1, function(x) sum(x==1)) # here are the number of pops missing all data by locus
-
-# here are the loci that are typed in all populations
-full.data.loci <- paste(rep(names(num.non.genod.pops)[num.non.genod.pops==0],each=2), c("", ".1"), sep="")
-
-# select just the full data loci:
-#a2 <- a2[, full.data.loci]
-###############################################################################
-
 # make a gsi_sim input file:
 gPdf2gsi.sim(a2, the.pops.f)
 
