@@ -1,12 +1,4 @@
 
-# install gpiper package (we do this every time because the package is currently evolving...)
-#install.packages("gpiper_0.1.zip", repos=NULL)
-
-# then load the package
-library(gpiper)
-
-
-
 
 
 
