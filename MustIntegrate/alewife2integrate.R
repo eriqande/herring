@@ -1,65 +1,4 @@
 
-# install gpiper package (we do this every time because the package is currently evolving...)
-#install.packages("gpiper_0.1.zip", repos=NULL)
-
-# then load the package
-library(gpiper)
-
-
-baseline_path <- "./data/alewife-baseline.csv"
-lat_long_path <- "./data/alewife-lat-long.txt"
-
-# get the alewife
-a <- read.csv(baseline_path, as.is=T)
-a <- data.frame(ID=gsub("_", "", a$Drainage.code), a, stringsAsFactors=F)  # get the column that we want for the IDs in there, remove the underscores.
-
-# drop populations that have fewer than 9 individuals
-tmp <- table(gsub("[0-9]", "", a$ID))
-a1 <- a[ gsub("[0-9]", "", a$ID) %in% names(tmp[tmp>=9]), ]  # this eliminates 1 fish from MIR
-
-
-# now retain just the columns we want
-a2<- a1[,c(1,15:36)] # this was for the nulls removed and no McBride ONLY loci
-names(a2)[2:ncol(a2)][c(F,T)] <- names(a2)[2:ncol(a2)][c(T,F)] # get the locus names on each column
-names(a2)[1] <- ""  # remove the "ID" name
-
-
-## Here we put it into gpipe format
-# turn missing data to 0
-a2[is.na(a2)] <- 0
-
-# make the ID the rownames and then toss that column
-rownames(a2) <- a2[,1]
-a2 <- a2[,-1]
-
-
-
-# then we should be able to write out a gsi_sim file easily
-# get the pops we want in the order we want them:
-the.pops <- gsub("[0-9]*", "", rownames(a2))
-the.pops.f <- factor(the.pops, levels=unique(the.pops))
-
-# make a gsi_sim input file:
-gPdf2gsi.sim(a2, the.pops.f)
-
-# and then run that file:
-gsi_Run_gsi_sim("-b gsi_sim_file.txt --self-assign")
-
-# and get the self assignment results
-SA <- gsi.simSelfAss2DF(file="GSI_SIM_Dumpola.txt")$Post
-
-# figure out the max assignments to population:
-MC <- gsi_simMaxColumnAndPost(SA,-c(1,2))  # dropping the first two columns here because they are not assignment posteriors
-
-# then, here are our assignment matrices to population
-topop<- gsi_simAssTableVariousCutoffs(SA$PopulationOfOrigin, MC$MaxColumn, MC$MaxPosterior)
-
-
-
-
-
-
-
 #Export assignment matrices for additional analyses:
 write.csv(topop,"1a. Alewife self assignment matrices to population - Palkovacs ONLY.csv")
 write.csv(toprg,"2a. Alewife self assignment matrices to reporting group K=3 - Palkovacs ONLY.csv")
@@ -254,7 +193,7 @@ alewife_Yr_Season_Region <-count(alewife, c("Year", "Season", "Region"))
 alewife_Yr_Season_Region_Fishery <-count(alewife, c("Year", "Season", "Region", "Target.Fishery"))
 alewife_Yr_Season_Region_Fishery_Gear <-count(alewife, c("Year", "Season", "Region", "Target.Fishery","Gear.Type"))
 
-Export these groupings
+#Export these groupings
 write.csv(alewife_Yr,"Alewife bycatch by year.csv")
 write.csv(alewife_Yr_Season,"Alewife bycatch by year season.csv")
 write.csv(alewife_Yr_Season_Region,"Alewife bycatch by year season region.csv")
@@ -282,5 +221,4 @@ cor(alewife.df$Year, alewife.df$freq)
 
 boing <- split(alewife, f=alewife$Year)
 str(boing)
-
 

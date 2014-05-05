@@ -1,14 +1,9 @@
 # Herring
 
-This is an Rstudio project that is currently under development.
-It contains code useful for doing genetic stock identification of 
+This is an R package that is currently under development.
+It contains code and data useful for doing genetic stock identification of 
 herring species on the east coast.  
 
-
-It has been designed so that if we decide to it will be
-easy to turn this into an R package.  However, at this point
-I don't think all the collaborators have the tools necessary to
-build packags.
 
 ## Terms 
 
