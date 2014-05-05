@@ -1,3 +1,5 @@
+# For Source Code and Binaries:
+
 As a work, at least in part, of the United States Government, this package is in the
 public domain within the United States. The co-authors of this package
 who are not Federal employees also place their contributions into the
@@ -31,3 +33,10 @@ this deed makes no warranties about the work, and disclaims liability for
 all uses of the work, to the fullest extent permitted by applicable law.
 When using or citing the work, you should not imply endorsement by the
 author or the affirmer.
+
+# For Data Contained Within This Package
+These data are not products of the US Govt and thus are not provided under the
+same license as the source code and binaries.  Open source license yet to 
+be determined.
+
+
