@@ -48,6 +48,7 @@ herring_csv2gpiper <- function(baseline_path, lat_long_path, locus_columns) {
 #' @param baseline.df  a data frame of the sort returned by \code{\link{herring_csv2gpiper}}
 #' @return A factorvector of the populations in the baseline.  Has a side effect of writing a file named
 #' gsi_sim_file.txt in the current working directory.
+#' @export
 make_baseline_file <- function(baseline_df) {
   # then we should be able to write out a gsi_sim file easily
   # get the pops we want in the order we want them:
@@ -69,8 +70,10 @@ make_baseline_file <- function(baseline_df) {
 #' 
 #' @param the.pops.f  factor vector giving the population that each individual in the
 #' baseline belongs to.
+#' @param rep_unit_path  Path to the file designating the reporting units.
 #' @return Returns the self-assignment matrices to pop and to reporting group.
-gsi_self_assignment <- function(the.pops.f) {
+#' @export
+gsi_self_assignment <- function(the.pops.f, rep_unit_path) {
   # and then run that file:
   gsi_Run_gsi_sim("-b gsi_sim_file.txt --self-assign")
   
@@ -81,19 +84,36 @@ gsi_self_assignment <- function(the.pops.f) {
   MC <- gsi_simMaxColumnAndPost(SA,-c(1,2))  # dropping the first two columns here because they are not assignment posteriors
   
   # then, here are our assignment matrices to population
-  topop<- gsi_simAssTableVariousCutoffs(SA$PopulationOfOrigin, MC$MaxColumn, MC$MaxPosterior)
+  topop<- gsi_simAssTableVariousCutoffs(SA$PopulationOfOrigin, MC$MaxColumn, MC$MaxPosterior, cutoffs = seq(0, 0.95, by = 0.05))
+  
   
   # let us explore aggregating assignments by reporting unit
   rg <- read.table(rep_unit_path, header=T, row=1)
   rg.f <- factor(rg$RepGroup, levels=unique(rg$RepGroup))
   
+
   SA.rg <- gsi_aggScoresByRepUnit(SA, levels(the.pops.f), rg.f)  # here are the assignment values by reporting group
   MC.rg <- gsi_simMaxColumnAndPost(SA.rg,-c(1,2))
   
   
-  toprg <- gsi_simAssTableVariousCutoffs(SA.rg$PopulationOfOrigin, MC.rg$MaxColumn, MC.rg$MaxPosterior)
+  toprg <- gsi_simAssTableVariousCutoffs(SA.rg$PopulationOfOrigin, MC.rg$MaxColumn, MC.rg$MaxPosterior, cutoffs = seq(0, 0.95, by = 0.05))
   
-  list(topop = topop, toprg = toprg)
+  # now we also want to condense the "from"'s to their reporting groups:
+  frgtrg <-  lapply(toprg, function(z) {
+    x <- z$AssTable
+    z$AssTable <- do.call(rbind, tapply(1:nrow(x), rg.f, function(y) colSums(x[y, ])))
+    z
+  })
+  
+  samp_sizes <- rowSums(topop[[1]]$AssTable)
+  
+  
+  list(from_pop_to_pop = topop, 
+       from_pop_to_rg = toprg,
+       from_rg_to_rg = frgtrg,
+       from_pop_sample_sizes = samp_sizes,
+       from_rg_sample_sizes = tapply(samp_sizes, rg.f, sum)
+       )
 }
 
 

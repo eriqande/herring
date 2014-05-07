@@ -3,11 +3,13 @@
 \alias{gsi_self_assignment}
 \title{Run gsi_sim for a self-assignment analysis and caputure the requisite output}
 \usage{
-gsi_self_assignment(the.pops.f)
+gsi_self_assignment(the.pops.f, rep_unit_path)
 }
 \arguments{
-  \item{the.pops.f}{factor vector giving the population
-  that each individual in the baseline belongs to.}
+\item{the.pops.f}{factor vector giving the population that each individual in the
+baseline belongs to.}
+
+\item{rep_unit_path}{Path to the file designating the reporting units.}
 }
 \value{
 Returns the self-assignment matrices to pop and to reporting group.
