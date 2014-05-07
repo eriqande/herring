@@ -12,4 +12,5 @@ Roxygen: list(wrap = FALSE)
 Suggests:
     testthat
 Depends:
-    gpiper
+    gpiper,
+    RColorBrewer

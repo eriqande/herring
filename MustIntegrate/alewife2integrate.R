@@ -68,37 +68,6 @@ lapply(1:nrow(x), function(r) {
 }
 )
 
-################### And here we have our barplot of self-assignments to stock
-dan.col <- c("red", "blue", "green")
-x<-t(toprg[[1]]$AssTable)  # this is using cutoff of 0
-y <- x[,rev(1:ncol(x))]  # get them in the right order
-
-yp <- apply(y, 2, function(x) x/sum(x))
-
-par(mar=c(2,7,.3,2))
-barplot(yp, horiz=T, col=dan.col, las=1, names.arg=paste(colnames(yp), " (",colSums(y) ,")"), cex.names=.7)
-
-dev.copy2pdf(file="alewife-stacked barplot self-assignment to stock - Palkovacs ONLY.pdf")
-
-
-
-################### And here we have our stacked barplot of self-assignment to population
-dan.col2 <- c("red","red4", "tomato", "blue", "blue3", "blue4", "aquamarine", "cyan", "cyan3", "cyan4", "cadetblue", 
-              "dodgerblue", "deepskyblue", "lightblue", "royalblue", "green", "darkgreen", "darkolivegreen2", "lawngreen", 
-              "forestgreen", "springgreen2")
-
-
-
-x1<-t(topop[[1]]$AssTable)  # this is using cutoff of 0
-y1<- x1[,rev(1:ncol(x1))]  # get them in the right order
-
-yp <- apply(y1, 2, function(x1) x1/sum(x1))
-
-par(mar=c(2,7,.3,2))
-barplot(yp, horiz=T, col=dan.col2, las=1, names.arg=paste(colnames(yp), " (",colSums(y1) ,")"))
-dev.copy2pdf(file="alewife-stacked barplot self-assignment to population - Palkovacs ONLY.pdf")
-
-
 
 
 

@@ -112,12 +112,61 @@ gsi_self_assignment <- function(the.pops.f, rep_unit_path) {
        from_pop_to_rg = toprg,
        from_rg_to_rg = frgtrg,
        from_pop_sample_sizes = samp_sizes,
-       from_rg_sample_sizes = tapply(samp_sizes, rg.f, sum)
+       from_rg_sample_sizes = tapply(samp_sizes, rg.f, sum),
+       rep_units = rg.f
        )
 }
 
 
+#' make a simple barplot of proportions assigned from an assignment array
+#' 
+#' @param ass_array The self assignment arrray, as you might find as one of the 
+#' components returned by gsi_self_assignment
+#' @param cols the colors to use
+#' @export
+simple_barplot <- function(ass_array, cols=c("red", "blue", "green")) {
+  x<-t(ass_array)
+  y <- x[,rev(1:ncol(x))]  # get them in the right order
+  
+  yp <- apply(y, 2, function(x) x/sum(x))
+  
+  par(mar=c(2,7,.3,2))
+  barplot(yp, horiz=T, col=cols, las=1, names.arg=paste(colnames(yp), " (",colSums(y) ,")"), cex.names=.7)
+  
+}
 
 
+#' create a ramp of colors starting from the last and proceeding to the y-th of a color brewer palette
+#' 
+#' @param brew.pal The color brewer palette.  By name.
+#' @param n The number of colors to return in the ramp
+#' @param y Endpoint on the "light" side of the palette
+#' @export
+#' @examples
+#' rr <- brewerRamp("Purples", 9)
+#' image(1:length(rr), 1, as.matrix(1:length(rr)), col = rr, ylab = "", xaxt = "n", yaxt = "n", bty = "n")
+brewerRamp <- function(brew.pal, n = 7, y = 3) {
+  myCols <- rev(brewer.pal(9, name = brew.pal)[-(1:y)])
+  ramp <- colorRampPalette(myCols)
+  ramp(n)
+  
+}
+
+
+#' make a barplot that has different densities of the same color for pops within the same reporting unit
+#' 
+#' @param ass_array An assignment array with rows being from and cols being "to". Where individuals
+#' are assigned to populations.
+#' @param rep_groups a factor vector given the reporting groups each populations belongs to.  For this to
+#' work, the pops must all be ordered so that they are all next to one another within reporting groups
+#' @param brew.pals color brewer palette names.  There should be one for every reporting unit.  Will recycle as 
+#' necessary.
+to_pops_barplot <- function(ass_array, rep_groups, brew.pals = c("Reds", "Blues", "Greens")) {
+  tab <- table(rep_groups)
+  bp <- rep(brew.pals, length.out = length(tab))
+  cols <- unlist(lapply(1:length(tab), function(x) brewerRamp(bp[x], tab[x])))
+  
+  simple_barplot(ass_array, cols)
+}
 
 
