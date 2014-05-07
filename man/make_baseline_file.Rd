@@ -9,7 +9,7 @@ make_baseline_file(baseline_df)
 \item{baseline.df}{a data frame of the sort returned by \code{\link{herring_csv2gpiper}}}
 }
 \value{
-A factorvector of the populations in the baseline.  Has a side effect of writing a file named
+A factor vector of the populations in the baseline.  Has a side effect of writing a file named
 gsi_sim_file.txt in the current working directory.
 }
 \description{

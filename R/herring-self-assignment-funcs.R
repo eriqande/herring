@@ -46,7 +46,7 @@ herring_csv2gpiper <- function(baseline_path, lat_long_path, locus_columns) {
 #' make a gsi-sim file from a gpiper data frame
 #' 
 #' @param baseline.df  a data frame of the sort returned by \code{\link{herring_csv2gpiper}}
-#' @return A factorvector of the populations in the baseline.  Has a side effect of writing a file named
+#' @return A factor vector of the populations in the baseline.  Has a side effect of writing a file named
 #' gsi_sim_file.txt in the current working directory.
 #' @export
 make_baseline_file <- function(baseline_df) {

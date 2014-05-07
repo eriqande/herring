@@ -3,6 +3,8 @@ baseline_path <- "./inst/data_files/alewife-baseline.csv"
 lat_long_path <- "./inst/data_files/alewife-lat-long.txt"
 rep_unit_path <- "./inst/data_files/alewife-3-grps.txt"
 locus_columns <-  14:35
+bycatch_path <- "./inst/data_files/alewife-bycatch.csv"
+bycatch_locus_columns <- 15:36
 
 
 baseline_path <- "./inst/data_files/blueback-baseline.csv"
@@ -11,13 +13,44 @@ rep_unit_path <- "./inst/data_files/blueback-4-grps.txt"
 locus_columns <-  14:39
 
 
-#' main wrapper function that does all the steps of a full analysis
+#' main wrapper for doing all the analyses
+#' 
+#' @export
+herring_all_analyses <- function(
+                                 baseline_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-baseline.csv"),
+                                 lat_long_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-lat-long.txt"),
+                                 rep_unit_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-3-grps.txt"),
+                                 locus_columns =  14:35,
+                                 bycatch_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-bycatch.csv"),
+                                 bycatch_locus_columns = 15:36) {
+  
+  # do the baseline assessment and capture the baseline_df as output.
+  baseline_stuff <- herring_main_baseline_assess_func(baseline_path,
+                                                   lat_long_path,
+                                                   rep_unit_path,
+                                                   locus_columns)
+  
+  
+  # now, do the bycatch analyses
+  bycatch_output <- herring_main_bycatch_analyses(bycatch_path, 
+                                                  bycatch_locus_columns, 
+                                                  baseline_stuff$baseline, 
+                                                  rep_unit_path)
+  
+  list(baseline_assessment = baseline_stuff, bycatch_output = bycatch_output)
+  
+}
+
+
+
+#' main wrapper function that does all the steps for assessing the baseline
 #' 
 #' @inheritParams herring_csv2gpiper
 #' 
-herring_main_func <- function(
+#' @export
+herring_main_baseline_assess_func <- function(
   baseline_path,
-  lat_long_path, 
+  lat_long_path,
   rep_unit_path,
   locus_columns
   ) {
@@ -38,5 +71,30 @@ herring_main_func <- function(
   # shade gradient barplot to pops
   to_pops_barplot(self_ass$from_pop_to_pop$Cutoff_0$AssTable, self_ass$rep_units)
   
+  # return the baseline data and the reporting units
+  list(baseline = baseline.df, rep_units = self_ass$rep_units)
+}
+
+
+#' all the bycatch related steps wrapped up in this function
+#' 
+#' I am going to add parameters and stuff to this later.  Just kine of a stub at this point. 
+#' @export
+herring_main_bycatch_analyses <- function(bycatch_path, bycatch_locus_columns, baseline.df, rep_unit_path) {
   
+  # get all the bycatch taken care of and put in a big list
+  bycatch_list <- read_and_stratify_bycatch(bycatch_path, bycatch_locus_columns = bycatch_locus_columns)
+  
+  
+  # now, put the baseline loci in the correct order (i.e. so they line up with the locus order in the bycatch files)
+  byc.loci <- make.unique(names(bycatch_list[[1]])[bycatch_locus_columns])
+  names(baseline.df) <- make.unique(names(baseline.df))  # make the baseline loci have corresponding names
+  baseline_reordered <- baseline.df[, byc.loci]
+  names(baseline_reordered)[c(F,T)] <- names(baseline_reordered)[c(T,F)]
+  
+  
+  lapply(bycatch_list, function(x)
+    do_mixture_analysis(x, bycatch_locus_columns, baseline_reordered, rep_unit_path)
+  )
+    
 }
