@@ -3,7 +3,7 @@
 \alias{simple_barplot}
 \title{make a simple barplot of proportions assigned from an assignment array}
 \usage{
-simple_barplot(ass_array, cols = c("red", "blue", "green"))
+simple_barplot(ass_array, cols = c("red", "blue", "green", "orange"))
 }
 \arguments{
 \item{ass_array}{The self assignment arrray, as you might find as one of the

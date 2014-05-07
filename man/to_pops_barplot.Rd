@@ -3,8 +3,9 @@
 \alias{to_pops_barplot}
 \title{make a barplot that has different densities of the same color for pops within the same reporting unit}
 \usage{
-to_pops_barplot(ass_array, rep_groups, brew.pals = c("Reds", "Blues",
-  "Greens"))
+to_pops_barplot(ass_array, rep_groups,
+  col.pairs = matrix(c(brewerPairs("Reds"), brewerPairs("Blues"),
+  brewerPairs("Greens"), "yellow", "khaki"), nrow = 2))
 }
 \arguments{
 \item{ass_array}{An assignment array with rows being from and cols being "to". Where individuals
@@ -13,8 +14,7 @@ are assigned to populations.}
 \item{rep_groups}{a factor vector given the reporting groups each populations belongs to.  For this to
 work, the pops must all be ordered so that they are all next to one another within reporting groups}
 
-\item{brew.pals}{color brewer palette names.  There should be one for every reporting unit.  Will recycle as
-necessary.}
+\item{col.pairs}{matrix of pairs of colors}
 }
 \description{
 make a barplot that has different densities of the same color for pops within the same reporting unit

@@ -5,6 +5,12 @@ rep_unit_path <- "./inst/data_files/alewife-3-grps.txt"
 locus_columns <-  14:35
 
 
+baseline_path <- "./inst/data_files/blueback-baseline.csv"
+lat_long_path <- "./inst/data_files/blueback-lat-long.txt"
+rep_unit_path <- "./inst/data_files/blueback-4-grps.txt"
+locus_columns <-  14:39
+
+
 #' main wrapper function that does all the steps of a full analysis
 #' 
 #' @inheritParams herring_csv2gpiper

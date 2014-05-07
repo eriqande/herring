@@ -124,7 +124,7 @@ gsi_self_assignment <- function(the.pops.f, rep_unit_path) {
 #' components returned by gsi_self_assignment
 #' @param cols the colors to use
 #' @export
-simple_barplot <- function(ass_array, cols=c("red", "blue", "green")) {
+simple_barplot <- function(ass_array, cols=c("red", "blue", "green", "orange")) {
   x<-t(ass_array)
   y <- x[,rev(1:ncol(x))]  # get them in the right order
   
@@ -153,19 +153,30 @@ brewerRamp <- function(brew.pal, n = 7, y = 3) {
 }
 
 
+
+brewerPairs <- function(brew.pal, y=3) {
+  myCols <- rev(brewer.pal(9, name = brew.pal)[-(1:y)])
+  c(myCols[1], myCols[length(myCols)])
+}
+
+
+
+
 #' make a barplot that has different densities of the same color for pops within the same reporting unit
 #' 
 #' @param ass_array An assignment array with rows being from and cols being "to". Where individuals
 #' are assigned to populations.
 #' @param rep_groups a factor vector given the reporting groups each populations belongs to.  For this to
 #' work, the pops must all be ordered so that they are all next to one another within reporting groups
-#' @param brew.pals color brewer palette names.  There should be one for every reporting unit.  Will recycle as 
-#' necessary.
+#' @param col.pairs matrix of pairs of colors
 #' @export
-to_pops_barplot <- function(ass_array, rep_groups, brew.pals = c("Reds", "Blues", "Greens")) {
+to_pops_barplot <- function(ass_array, rep_groups, 
+                            col.pairs = matrix(c(brewerPairs("Reds"), brewerPairs("Blues"), brewerPairs("Greens"), "yellow", "khaki"), nrow=2)
+                            ){
   tab <- table(rep_groups)
-  bp <- rep(brew.pals, length.out = length(tab))
-  cols <- unlist(lapply(1:length(tab), function(x) brewerRamp(bp[x], tab[x])))
+  bp <- col.pairs[, rep(1:ncol(col.pairs), length.out=length(tab))]
+  
+  cols <- unlist(lapply(1:ncol(bp), function(x) {r <- colorRampPalette(bp[,x]); r(tab[x])}))
   
   simple_barplot(ass_array, cols)
 }
