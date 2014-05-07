@@ -161,6 +161,7 @@ brewerRamp <- function(brew.pal, n = 7, y = 3) {
 #' work, the pops must all be ordered so that they are all next to one another within reporting groups
 #' @param brew.pals color brewer palette names.  There should be one for every reporting unit.  Will recycle as 
 #' necessary.
+#' @export
 to_pops_barplot <- function(ass_array, rep_groups, brew.pals = c("Reds", "Blues", "Greens")) {
   tab <- table(rep_groups)
   bp <- rep(brew.pals, length.out = length(tab))
