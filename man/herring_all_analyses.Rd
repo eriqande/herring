@@ -3,14 +3,8 @@
 \alias{herring_all_analyses}
 \title{main wrapper for doing all the analyses}
 \usage{
-herring_all_analyses(baseline_path = file.path(system.file("data_files",
-  package = "herring", mustWork = T), "alewife-baseline.csv"),
-  lat_long_path = file.path(system.file("data_files", package = "herring",
-  mustWork = T), "alewife-lat-long.txt"),
-  rep_unit_path = file.path(system.file("data_files", package = "herring",
-  mustWork = T), "alewife-3-grps.txt"), locus_columns = 14:35,
-  bycatch_path = file.path(system.file("data_files", package = "herring",
-  mustWork = T), "alewife-bycatch.csv"), bycatch_locus_columns = 15:36)
+herring_all_analyses(baseline_path, lat_long_path, rep_unit_path, locus_columns,
+  bycatch_path, bycatch_locus_columns)
 }
 \description{
 main wrapper for doing all the analyses

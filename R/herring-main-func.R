@@ -13,16 +13,48 @@ rep_unit_path <- "./inst/data_files/blueback-4-grps.txt"
 locus_columns <-  14:39
 
 
+
+#' function to return parameter settings for herring_all_analysis() for blueback
+#' 
+#' this returns parameter settings as a list so you can say do.call(herring_all_analyses, args = blueback_run_settings())
+blueback_run_settings <- function() {
+  list(
+    baseline_path = file.path(system.file("data_files", package = "herring", mustWork = T), "blueback-baseline.csv"),
+    lat_long_path = file.path(system.file("data_files", package = "herring", mustWork = T), "blueback-lat-long.txt"),
+    rep_unit_path = file.path(system.file("data_files", package = "herring", mustWork = T), "blueback-4-grps.txt"),
+    locus_columns =  14:39,
+    bycatch_path = file.path(system.file("data_files", package = "herring", mustWork = T), "blueback-bycatch.csv"),
+    bycatch_locus_columns = 15:40
+  )
+}
+
+
+
+#' function to return parameter settings for herring_all_analysis() for alewife
+#' 
+#' this returns parameter settings as a list so you can say do.call(herring_all_analyses, args = alewife_run_settings())
+alewife_run_settings <- function() {
+  list(
+    baseline_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-baseline.csv"),
+    lat_long_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-lat-long.txt"),
+    rep_unit_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-3-grps.txt"),
+    locus_columns =  14:35,
+    bycatch_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-bycatch.csv"),
+    bycatch_locus_columns = 15:36
+  )
+}
+
+
 #' main wrapper for doing all the analyses
 #' 
 #' @export
 herring_all_analyses <- function(
-                                 baseline_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-baseline.csv"),
-                                 lat_long_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-lat-long.txt"),
-                                 rep_unit_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-3-grps.txt"),
-                                 locus_columns =  14:35,
-                                 bycatch_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-bycatch.csv"),
-                                 bycatch_locus_columns = 15:36) {
+                                 baseline_path,
+                                 lat_long_path,
+                                 rep_unit_path,
+                                 locus_columns,
+                                 bycatch_path,
+                                 bycatch_locus_columns) {
   
   # do the baseline assessment and capture the baseline_df as output.
   baseline_stuff <- herring_main_baseline_assess_func(baseline_path,
