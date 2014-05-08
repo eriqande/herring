@@ -17,6 +17,7 @@ locus_columns <-  14:39
 #' function to return parameter settings for herring_all_analysis() for blueback
 #' 
 #' this returns parameter settings as a list so you can say do.call(herring_all_analyses, args = blueback_run_settings())
+#' @export
 blueback_run_settings <- function() {
   list(
     baseline_path = file.path(system.file("data_files", package = "herring", mustWork = T), "blueback-baseline.csv"),
@@ -33,6 +34,7 @@ blueback_run_settings <- function() {
 #' function to return parameter settings for herring_all_analysis() for alewife
 #' 
 #' this returns parameter settings as a list so you can say do.call(herring_all_analyses, args = alewife_run_settings())
+#' @export
 alewife_run_settings <- function() {
   list(
     baseline_path = file.path(system.file("data_files", package = "herring", mustWork = T), "alewife-baseline.csv"),
