@@ -101,7 +101,7 @@ gsi_self_assignment <- function(the.pops.f, rep_unit_path) {
   # now we also want to condense the "from"'s to their reporting groups:
   frgtrg <-  lapply(toprg, function(z) {
     x <- z$AssTable
-    z$AssTable <- do.call(rbind, tapply(1:nrow(x), rg.f, function(y) colSums(x[y, ])))
+    z$AssTable <- do.call(rbind, tapply(1:nrow(x), rg.f, function(y) colSums(rbind(x[y, ]))))
     z
   })
   

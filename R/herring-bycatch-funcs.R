@@ -66,11 +66,19 @@ do_mixture_analysis <- function(bycatch_df, bycatch_locus_columns, baseline_df, 
   gsi_Run_gsi_sim("-b gsi_sim_file.txt -t gsi_sim_mixture.txt -r rep_units.txt  --mcmc-sweeps 50000 --mcmc-burnin 20000 --pi-trace-interval 10")
   
   # slurp up the results:
-  Pi_Trace <- read.table("rep_unit_pi_trace.txt", header=T)
-  Pi_MLE <- read.table("rep_unit_pi_full_em_mle.txt", header=T)
-  Pi_PostMean <- read.table("rep_unit_pi_posterior_means.txt", header=T)
-  PofZ_MLE <- read.table("rep_unit_pofz_full_em_mle.txt", header=T)
-  PofZ_PostMean <- read.table("rep_unit_pofz_posterior_means.txt", header=T)
+  ret <- list()  # initialize to grab all these and return them
+  ret$Pi_Trace <- read.table("rep_unit_pi_trace.txt", header=T)
+  ret$Pi_MLE <- read.table("rep_unit_pi_full_em_mle.txt", header=T)
+  ret$Pi_PostMean <- read.table("rep_unit_pi_posterior_means.txt", header=T)
+  ret$PofZ_MLE <- read.table("rep_unit_pofz_full_em_mle.txt", header=T)
+  ret$PofZ_PostMean <- read.table("rep_unit_pofz_posterior_means.txt", header=T)
+  
+  # slurp up the results by population (not reporting units):
+  ret$pop_Pi_Trace <- read.table("pop_pi_trace.txt", header=T)
+  ret$pop_Pi_MLE <- read.table("pop_pi_full_em_mle.txt", header=T)
+  ret$pop_Pi_PostMean <- read.table("pop_pi_posterior_means.txt", header=T)
+  ret$pop_PofZ_MLE <- read.table("pop_pofz_full_em_mle.txt", header=T)
+  ret$pop_PofZ_PostMean <- read.table("pop_pofz_posterior_means.txt", header=T)
   
   # rid ourselves of the gsi_sim output files:
   unlink(c(dir(pattern = "pop_pi_.*"), dir(pattern = "pop_pofz_.*"), dir(pattern = "rep_unit_.*")))
@@ -78,10 +86,7 @@ do_mixture_analysis <- function(bycatch_df, bycatch_locus_columns, baseline_df, 
   # and of the input files:
   unlink(c("gsi_sim_file.txt", "gsi_sim_mixture.txt", "rep_units.txt"))
   
-  list(Pi_Trace = Pi_Trace,
-       Pi_PostMean = Pi_PostMean,
-       Pi_MLE = Pi_MLE,
-       PofZ_MLE = PofZ_MLE,
-       PofZ_PostMean = PofZ_PostMean)
+  # return ret
+  ret
 }
 
