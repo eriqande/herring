@@ -19,3 +19,23 @@ The data included in this package are not works of the US Govt and are provided 
 a different open source license that is yet to be determined.
 
 See TERMS.md for more information.
+
+
+## Replicating our results
+This repository is designed so that our results can be replicated easily.  Here are the commands that you would use at an R prompt to do that:
+```r
+library(devtools)  # load this library.  If you don't have it: install.packages("devtools")
+
+# install the R-package that is this library
+install_github("herring", username = "eriqande")
+
+# install the R package "gpiper" that is also needed
+install_github("gpiper", username = "eriqande", ref = "36be155a")
+
+# then load libraries as needed. Note that you need the RColorBrewer
+# package if you don't already have it
+library(herring)
+
+# then source the file in inst/analysis  (have to implement this still)
+```
+

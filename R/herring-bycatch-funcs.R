@@ -63,7 +63,7 @@ do_mixture_analysis <- function(bycatch_df, bycatch_locus_columns, baseline_df, 
   
   # run gsi_sim   ## NOTE!  I need to pass in a list of parameters to the current fucntion
   # so we can change the run settings.
-  gsi_Run_gsi_sim("-b gsi_sim_file.txt -t gsi_sim_mixture.txt -r rep_units.txt  --mcmc-sweeps 50000 --mcmc-burnin 20000 --pi-trace-interval 10")
+  gsi_Run_gsi_sim("-b gsi_sim_file.txt -t gsi_sim_mixture.txt -r rep_units.txt  --mcmc-sweeps 50000 --mcmc-burnin 20000 --pi-trace-interval 10 --mix-logl-sims 2500 0")
   
   # slurp up the results:
   ret <- list()  # initialize to grab all these and return them
@@ -79,6 +79,7 @@ do_mixture_analysis <- function(bycatch_df, bycatch_locus_columns, baseline_df, 
   ret$pop_Pi_PostMean <- read.table("pop_pi_posterior_means.txt", header=T)
   ret$pop_PofZ_MLE <- read.table("pop_pofz_full_em_mle.txt", header=T)
   ret$pop_PofZ_PostMean <- read.table("pop_pofz_posterior_means.txt", header=T)
+  ret$Zscores <- read.table("bayes_mixture_logl_summary.txt", header=T)
   
   # rid ourselves of the gsi_sim output files:
   unlink(c(dir(pattern = "pop_pi_.*"), dir(pattern = "pop_pofz_.*"), dir(pattern = "rep_unit_.*")))
