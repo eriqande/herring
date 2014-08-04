@@ -60,9 +60,6 @@ message("Comparing z-scores for mixture and baseline")
 #    bycatch data.
 bb1.bc.zs <- do.call(rbind, lapply(bb1$bycatch_output, function(x) x$Zscores))
 
-# this would plot those:
-ggplot(bb1.bc.zs, aes(x=zScore)) + geom_density() 
-
 # 2. Compute z scores for all the fish in the baseline
 bb1.baseline.pops <- make_baseline_file(bb1$baseline_assessment$baseline)  # this makes gsi_sim_file.txt 
 gsi_Run_gsi_sim(arg.string = "-b gsi_sim_file.txt --self-assign --base-logl-sims 2500 0")
@@ -72,11 +69,26 @@ bb1.base.zscores <- read.table("baseline_logl_summary.txt", header = T)
 bb1.bc.zs$Place  <- "MIX"
 bb1.base.zscores$Place <- "BASE"
 zmelt <- melt(rbind(bb1.bc.zs[c("Place", "zScore")], bb1.base.zscores[c("Place", "zScore")]), id.vars = "Place")
-ggplot(zmelt, aes(x = value, fill = variable)) + geom_histogram()
 
 # 4. And then plot them in various ways:
 ggplot(zmelt, aes(x = value, fill = Place)) + geom_density(alpha = 0.25)  # density plot
-gg_zhists <- ggplot(zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) # histograms
+bb_zhists <- ggplot(zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) # histograms
+ggsave("blueback_zhists.pdf", bb_zhists)
+
+
+# 5. Now do all the same stuff for alewife:
+aa1.bc.zs <- do.call(rbind, lapply(aa1$bycatch_output, function(x) x$Zscores))
+aa1.baseline.pops <- make_baseline_file(aa1$baseline_assessment$baseline)  # this makes gsi_sim_file.txt 
+gsi_Run_gsi_sim(arg.string = "-b gsi_sim_file.txt --self-assign --base-logl-sims 2500 0")
+aa1.base.zscores <- read.table("baseline_logl_summary.txt", header = T)
+aa1.bc.zs$Place  <- "MIX"
+aa1.base.zscores$Place <- "BASE"
+aa_zmelt <- melt(rbind(aa1.bc.zs[c("Place", "zScore")], aa1.base.zscores[c("Place", "zScore")]), id.vars = "Place")
+aa_zhists <- ggplot(aa_zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) # histograms
+ggsave("alewife_zhists.pdf", aa_zhists)
+
+
+
 
 # it seems to me that the histogram above definitively shows us that we don't need to 
 # toss any fish from the mixture. (though we have a handful in the baseline that are clearly
@@ -94,5 +106,22 @@ message("Doing replicate runs of the MCMC")
 bb.list <- lapply(1:6, function(x) {message(paste("Running Blueback Run", x)); do.call(herring_all_analyses, args = blueback_run_settings())})
 aa.list <- lapply(1:6, function(x) {message(paste("Running Alewife Run", x)); do.call(herring_all_analyses, args = alewife_run_settings())})
 
-# now save those to an rda
-save(aa.list, bb.list, file="multi-mcmcm-runs.rda")
+# now save those to an rda in case you want to use them later
+save(aa.list, bb.list, file="multi-mcmcm-runs.rda", compress = "xz")
+
+# then plot all the posterior means of the Pi parameter (over reporting units) for each 
+# of those 6 runs against the first one we did (aa1 of bb1)
+plot_pi <- function(x, yl, file = "pi-comp-plot.pdf") {  # x will be like bb1 and yl like bb.list
+  xx <- do.call(rbind, lapply(x$bycatch_output, function(z) z$Pi_PostMean))  # get the Pi estimates from the very first run
+  yy.list <- lapply(yl, function(x) do.call(rbind, lapply(x$bycatch_output, function(z) z$Pi_PostMean)))
+  
+  # now plot this
+  pdf(file = file, width = 12, height = 9)
+  par(mfrow=c(2,3))
+  lapply(yy.list, function(y) {plot(xx$Mean.Pi, y$Mean.Pi); abline(a = 0, b = 1, lwd = .25, col = "gray")})
+  dev.off()
+}
+
+
+plot_pi(bb1, bb.list, "blueback-pi-comp-between-runs.pdf")
+plot_pi(aa1, aa.list, "alewife-pi-comp-between-runs.pdf")

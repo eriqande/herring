@@ -8,4 +8,7 @@ GSI_SIM_Stderr.txt
 gsi_sim_file.txt
 gsi_sim_seeds
 *logl_summary*
-zhists.pdf
+*zhists.pdf
+*pi-comp-between-runs*
+Rplots.pdf
+pi-comp-plot.pdf

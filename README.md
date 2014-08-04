@@ -32,10 +32,22 @@ install_github("herring", username = "eriqande")
 # install the R package "gpiper" that is also needed
 install_github("gpiper", username = "eriqande", ref = "36be155a")
 
-# then load libraries as needed. Note that you need the RColorBrewer
-# package if you don't already have it
-library(herring)
 
-# then source the file in inst/analysis  (have to implement this still)
+# then source the analysis file like this:
+# pdf()  # If running on a remote system without windowing, uncomment this line so the plots don't fail (Note, it won't make all of them pdf!)
+source(system.file("analysis/compile-analysis.R", package = "herring"))
+
+# that will end up running a fairly long time (30 to 60 minutes, maybe)because it does multiple runs of the chains 
+# for the mixed fishery analyses.  Read the script to see what is going on in it.
+# The script does write out four pdf files that will probably find their way to
+# the supplement.  They are:
+#
+#    "alewife_zhists.pdf"                 :   histograms of the z-scores for fish from mixture vs from baseline for alewife 
+#    "blueback_zhists.pdf"                :   histograms of the z-scores for fish from mixture vs from baseline for blueback 
+#    "alewife-pi-comp-between-runs.pdf"   :   scatter plots showing posterior mean estimates of mixing proportions for 6 mcmc
+#                                         :   runs plotted against first run for alewife
+#    "blueback-pi-comp-between-runs.pdf"  :   scatter plots showing posterior mean estimates of mixing proportions for 6 mcmc
+#                                         :   runs plotted against first run for blueback
+
 ```
 
