@@ -91,8 +91,8 @@ message("Doing replicate runs of the MCMC")
 # we will just re-do the whole analysis multiple times, and it will end up 
 # using different seeds for the gsi_sim because it draws those from the 
 # gsisim_seeds file.
-bb.list <- lapply(1:6, function(x) {message(paste("Running Blueback Run" x)); do.call(herring_all_analyses, args = blueback_run_settings())})
-aa.list <- lapply(1:6, function(x) {message(paste("Running Alewife Run" x)); do.call(herring_all_analyses, args = alewife_run_settings())})
+bb.list <- lapply(1:6, function(x) {message(paste("Running Blueback Run", x)); do.call(herring_all_analyses, args = blueback_run_settings())})
+aa.list <- lapply(1:6, function(x) {message(paste("Running Alewife Run", x)); do.call(herring_all_analyses, args = alewife_run_settings())})
 
 # now save those to an rda
 save(aa.list, bb.list, file="multi-mcmcm-runs.rda")
