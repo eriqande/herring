@@ -16,6 +16,7 @@ library(reshape2)
 library(ggplot2)
 
 #### Do the self-assignment analyses and the GSI once on blueback and herring  ####
+message("Doing self-assignment and GSI one time")
 #  bb is "blueback" and "aa" is alewife
 bb1 <- do.call(herring_all_analyses, args = blueback_run_settings())  # first run
 aa1 <- do.call(herring_all_analyses, args = alewife_run_settings())  # first run
@@ -36,6 +37,7 @@ aa1 <- do.call(herring_all_analyses, args = alewife_run_settings())  # first run
 # The ones that don't start with "pop" are results from Reporting Units and the ones that do are
 # results from populations in the baseline.
 
+message("Making plots to show how to access lists")
 # So, here are some examples of how we would access these:
 # 1. Make plots of the mixing proportions in the "2012.Winter.South New England 611.Atlantic Herring." stratum
 pi.trace.melt  <- melt(bb1$bycatch_output$"2012.Winter.South New England 611.Atlantic Herring."$Pi_Trace, id.vars = "SweepNumber")
@@ -51,6 +53,7 @@ ggplot(pop.pi.trace.melt,aes(x=variable, y=value, fill = variable)) + geom_boxpl
 
 
 #### Comparing Zscores for bycatch fish to the baseline fish ####
+message("Comparing z-scores for mixture and baseline")
 # It can be instructive to compare these Z-scores, to see if there are any
 # in the bycatch that fall well outside what is expected.  So,  here we go.
 # 1. First, extract the Z-scores for all the fish across all the strata from the 
@@ -73,7 +76,7 @@ ggplot(zmelt, aes(x = value, fill = variable)) + geom_histogram()
 
 # 4. And then plot them in various ways:
 ggplot(zmelt, aes(x = value, fill = Place)) + geom_density(alpha = 0.25)  # density plot
-ggplot(zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) # histograms
+gg_zhists <- ggplot(zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) # histograms
 
 # it seems to me that the histogram above definitively shows us that we don't need to 
 # toss any fish from the mixture. (though we have a handful in the baseline that are clearly
@@ -83,12 +86,13 @@ ggplot(zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Pla
 #### Do replicate runs of the MCMC to confirm that things are mixing fine ####
 # In a sense this is something of a no brainer, because GSI_SIM mixes well by 
 # design, but it will be worth doing anyway.
+message("Doing replicate runs of the MCMC")
 
-# get all the posterior means of the Pi's (mixing proportions) into a single data frame
-bb1.pis <-  do.call(rbind, lapply(bb1[[2]], function(x) x$Pi_PostMean))  # for first run
-aa1.pis <-  do.call(rbind, lapply(aa1[[2]], function(x) x$Pi_PostMean)) # for second run
+# we will just re-do the whole analysis multiple times, and it will end up 
+# using different seeds for the gsi_sim because it draws those from the 
+# gsisim_seeds file.
+bb.list <- lapply(1:6, function(x) {message(paste("Running Blueback Run" x)); do.call(herring_all_analyses, args = blueback_run_settings())})
+aa.list <- lapply(1:6, function(x) {message(paste("Running Alewife Run" x)); do.call(herring_all_analyses, args = alewife_run_settings())})
 
-# plot them:
-plot(bb1$Mean.Pi, bb2$Mean.Pi)
-abline(a=0, b=1) # show that y=x pretty much!
-
+# now save those to an rda
+save(aa.list, bb.list, file="multi-mcmcm-runs.rda")
