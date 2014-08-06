@@ -14,6 +14,8 @@
 library(herring)  # make sure the library is loaded
 library(reshape2)
 library(ggplot2)
+library(grid)
+library(plyr)
 
 #### Do the self-assignment analyses and the GSI once on blueback and herring  ####
 message("Doing self-assignment and GSI one time")
@@ -39,91 +41,68 @@ aa1 <- do.call(herring_all_analyses, args = alewife_run_settings())  # first run
 
 message("Making plots to show how to access lists")
 # So, here are some examples of how we would access these:
-# 1. Make plots of the mixing proportions in the "2012.Winter.South New England 611.Atlantic Herring." stratum
-pi.trace.melt  <- melt(bb1$bycatch_output$"2012.Winter.South New England 611.Atlantic Herring."$Pi_Trace, id.vars = "SweepNumber")
-ggplot(pi.trace.melt,aes(x=value, fill=variable)) + geom_density(alpha=0.25)  # density plot
-ggplot(pi.trace.melt,aes(x=variable, y=value, fill = variable)) + geom_boxplot()
 
 
-
-# 1.5 Make boxplots and density plots of the mixing proportions estimate when bycatch was all lumped (not stratified)
-lumpy.pi.trace.melt <- melt(bb1$bycatch_lumped_together$All_Strata_Lumped$Pi_Trace, id.vars = "SweepNumber")
-ggplot(lumpy.pi.trace.melt,aes(x=variable, y=value, fill = variable)) + geom_boxplot() + ggtitle("BB bycatch lumped (unstratified)")
-ggplot(lumpy.pi.trace.melt,aes(x=value, fill=variable)) + geom_density(alpha=0.25)  # density plot
-boxplot(lumpy.pi.trace.melt$value ~ lumpy.pi.trace.melt$variable)  # here is the non-ggplot version.
-
-# 2. Do something similar, but make it boxplots for the pop's:
-pop.pi.trace.melt  <- melt(bb1$bycatch_output$"2012.Winter.South New England 611.Atlantic Herring."$pop_Pi_Trace, id.vars = "SweepNumber")
-ggplot(pop.pi.trace.melt,aes(x=variable, y=value, fill = variable)) + geom_boxplot()
-
-
-
-# 2.25  Ah hell.  Why not make boxplots to population for all of the strata:
-melty.pops <- lapply(bb1$bycatch_output, function(x) melt(x$pop_Pi_Trace, id.vars = "SweepNumber"))
-many.pop.plots <- lapply(names(melty.pops), function(a) {
-  z <- melty.pops[[a]]
-  ggplot(z, aes(x = variable, y = value, fill = variable)) + geom_boxplot() + ggtitle(a) + coord_flip()
-})
-many.pop.plots[[5]]  # look at one of them
-
-# 2.4 And here is the same thing for reporting units:
-melty.reps <- lapply(bb1$bycatch_output, function(x) melt(x$Pi_Trace, id.vars = "SweepNumber"))
-many.rep.plots <- lapply(names(melty.reps), function(a) {
-  z <- melty.reps[[a]]
-  ggplot(z, aes(x = variable, y = value, fill = variable)) + geom_boxplot() + ggtitle(a) + coord_flip()
-})
-many.rep.plots[[5]]  # look at one of them
-
-
-# 2.5 Here is the lumped result by population:
-lumpy.pop.pi.trace.melt  <- melt(bb1$bycatch_lumped_together$All_Strata_Lumped$pop_Pi_Trace, id.vars = "SweepNumber")
-ggplot(lumpy.pop.pi.trace.melt, aes(x=variable, y=value, fill = variable)) + geom_boxplot() + ggtitle("BB Bycatch lumped and by population")
-
-
-# here let's make boxplots and color them by the reporting unit:
+# prepare to make boxplots and color them by the reporting unit:
 # here are some layers, saved in a list, to make boxplots
 boxp_layers <- list(
-  geom_boxplot(outlier.colour = NULL),
+  geom_boxplot(outlier.colour = NULL, outlier.size = 0.8),
   coord_flip(),
-  scale_color_manual(values = c("red", "blue", "green", "yellow")), 
-  scale_fill_manual(values = c("red", "blue", "green", "yellow"))
+  ylab("Mixing Proportion")
 )
 
-# here we make boxplots for each population
+# get molten data for when bycatch was all lumped (not stratified)
+bb.pi.lump <- melt(bb1$bycatch_lumped_together$All_Strata_Lumped$Pi_Trace, id.vars = "SweepNumber")
+bb.pi.lump$ord.variable <- factor(bb.pi.lump$variable, levels = rev(levels(bb.pi.lump$variable))) # reorder this factor to get the right order North to South
+
+
+# here is the molten data when individuals are identified to population
+bb.pi.pop.lump  <- melt(bb1$bycatch_lumped_together$All_Strata_Lumped$pop_Pi_Trace, id.vars = "SweepNumber")
 ru <- bb1$baseline_assessment$rep_units  # these are the reporting unit factors
 names(ru) <- levels(bb1$baseline_assessment$the.pops.f)  # give them names for converting pops to rep units
-newdf <- cbind(lumpy.pop.pi.trace.melt, repu = ru[as.character(lumpy.pop.pi.trace.melt$variable)])
-newdf$variable <- factor(newdf$variable, levels = rev(levels(newdf$variable)))  # reverse their order so they plot North to South
+bb.pi.pop.lump$repu <- ru[as.character(bb.pi.pop.lump$variable)] # add a column for the reporting unit
+bb.pi.pop.lump$ord.variable <- factor(bb.pi.pop.lump$variable, levels = rev(levels(bb.pi.pop.lump$variable)))  # order that better
 
-# save a ggplot of that and put some black lines on it
-p <- ggplot(newdf, aes(x=variable, y=value, color = repu, fill = repu)) + 
+
+# save a ggplot object of mixing proportions to population and put some black lines on it
+p <- ggplot(bb.pi.pop.lump, aes(x=ord.variable, y=value, color = repu, fill = repu)) + 
   boxp_layers + 
-  geom_boxplot(outlier.colour = NA, colour = "black")
-  
+  geom_boxplot(outlier.colour = NA, colour = "black") +
+  scale_color_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
+  scale_fill_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
+  xlab("Population")
 
 # Now make a boxplot of the repunits total to inset into a little window
-lumpy.pi.trace.melt$variable <- factor(lumpy.pi.trace.melt$variable, levels = rev(levels(lumpy.pi.trace.melt$variable)))
 # this plot doesn't get any black lines because it is already pretty compressed
-q <- ggplot(lumpy.pi.trace.melt,aes(x=variable, y = value, fill=variable, color = variable)) + boxp_layers
+q <- ggplot(bb.pi.lump,aes(x=ord.variable, y = value, fill=ord.variable, color = ord.variable)) + boxp_layers +
+  scale_color_manual(name = "Reporting Units", values = rev(c("red", "blue", "green", "yellow"))) +
+  scale_fill_manual(name = "Reporting Units", values = rev(c("red", "blue", "green", "yellow"))) +
+#  guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) +
+  guides(fill = FALSE, color = FALSE) +
+  xlab("Reporting Unit")
 
 print(p)  # make the population plot
 vp <- viewport(width = 0.5, height = 0.33, x = 0.35, y = 0.06, just = c("left", "bottom"))
-print(q, vp = vp)
-
-#Any old plot
-a_plot <- ggplot(cars, aes(speed, dist)) + geom_line()
-
-#A viewport taking up a fraction of the plot area
-vp <- viewport(width = 0.4, height = 0.4, x = 0.8, y = 0.2)
-
-#Just draw the plot twice
-png("test.png")
-print(a_plot)
-print(a_plot, vp = vp)
-dev.off()
+print(q, vp = vp) # put the repu in a little window
 
 
-# So, from that it should be clear how all the info for the figures Dan made was extracted.
+
+# make faceted boxplots of the stratum results
+df <- ldply(melty.pops, data.frame)
+dfl <- df[sample(nrow(df), 100000),]  # use just a subset of the data for now
+dfl$repu <- ru[as.character(dfl$variable)]
+dfl$ord.var <- factor(dfl$variable, levels=rev(levels(dfl$variable)))
+t <- ggplot(dfl, aes(x = ord.var, y = value, fill = repu, color = repu)) + 
+  geom_boxplot(outlier.colour = NULL, outlier.size = 0.62) + 
+  geom_boxplot(outlier.colour = NA, color = "black") +
+  facet_wrap( ~ .id, ncol=5) + 
+  scale_fill_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
+  scale_color_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
+  coord_flip()
+
+
+
+
 
 
 
