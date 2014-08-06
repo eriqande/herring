@@ -64,14 +64,21 @@ herring_all_analyses <- function(
                                                    rep_unit_path,
                                                    locus_columns)
   
+  # now do the bycatch analysis unstratified
+  bycatch_lumped_together <- herring_main_bycatch_analyses(bycatch_path, 
+                                                           bycatch_locus_columns, 
+                                                           baseline_stuff$baseline, 
+                                                           rep_unit_path,
+                                                           stratifyOn = character(0))
   
-  # now, do the bycatch analyses
+  # now, do the bycatch analyses with things stratified
   bycatch_output <- herring_main_bycatch_analyses(bycatch_path, 
                                                   bycatch_locus_columns, 
                                                   baseline_stuff$baseline, 
                                                   rep_unit_path)
   
-  list(baseline_assessment = baseline_stuff, bycatch_output = bycatch_output)
+  
+  list(baseline_assessment = baseline_stuff, bycatch_output = bycatch_output, bycatch_lumped_together = bycatch_lumped_together)
   
 }
 
@@ -105,8 +112,8 @@ herring_main_baseline_assess_func <- function(
   # shade gradient barplot to pops
   to_pops_barplot(self_ass$from_pop_to_pop$Cutoff_0$AssTable, self_ass$rep_units)
   
-  # return the baseline data and the reporting units
-  list(baseline = baseline.df, rep_units = self_ass$rep_units)
+  # return the baseline data and the reporting units and the populations as well
+  list(baseline = baseline.df, rep_units = self_ass$rep_units, the.pops.f = the.pops.f)
 }
 
 
@@ -114,10 +121,10 @@ herring_main_baseline_assess_func <- function(
 #' 
 #' I am going to add parameters and stuff to this later.  Just kine of a stub at this point. 
 #' @export
-herring_main_bycatch_analyses <- function(bycatch_path, bycatch_locus_columns, baseline.df, rep_unit_path) {
+herring_main_bycatch_analyses <- function(bycatch_path, bycatch_locus_columns, baseline.df, rep_unit_path, stratifyOn = c("Year", "Season", "Region", "Target.Fishery", "Gear.Type")) {
   
   # get all the bycatch taken care of and put in a big list
-  bycatch_list <- read_and_stratify_bycatch(bycatch_path, bycatch_locus_columns = bycatch_locus_columns)
+  bycatch_list <- read_and_stratify_bycatch(bycatch_path, bycatch_locus_columns = bycatch_locus_columns, stratifyOn = stratifyOn)
   
   
   # now, put the baseline loci in the correct order (i.e. so they line up with the locus order in the bycatch files)

@@ -44,12 +44,55 @@ pi.trace.melt  <- melt(bb1$bycatch_output$"2012.Winter.South New England 611.Atl
 ggplot(pi.trace.melt,aes(x=value, fill=variable)) + geom_density(alpha=0.25)  # density plot
 ggplot(pi.trace.melt,aes(x=variable, y=value, fill = variable)) + geom_boxplot()
 
+
+
+# 1.5 Make boxplots and density plots of the mixing proportions estimate when bycatch was all lumped (not stratified)
+lumpy.pi.trace.melt <- melt(bb1$bycatch_lumped_together$All_Strata_Lumped$Pi_Trace, id.vars = "SweepNumber")
+ggplot(lumpy.pi.trace.melt,aes(x=variable, y=value, fill = variable)) + geom_boxplot() + ggtitle("BB bycatch lumped (unstratified)")
+ggplot(lumpy.pi.trace.melt,aes(x=value, fill=variable)) + geom_density(alpha=0.25)  # density plot
+boxplot(lumpy.pi.trace.melt$value ~ lumpy.pi.trace.melt$variable)  # here is the non-ggplot version.
+
 # 2. Do something similar, but make it boxplots for the pop's:
 pop.pi.trace.melt  <- melt(bb1$bycatch_output$"2012.Winter.South New England 611.Atlantic Herring."$pop_Pi_Trace, id.vars = "SweepNumber")
 ggplot(pop.pi.trace.melt,aes(x=variable, y=value, fill = variable)) + geom_boxplot()
 
 
+
+# 2.25  Ah hell.  Why not make boxplots to population for all of the strata:
+melty.pops <- lapply(bb1$bycatch_output, function(x) melt(x$pop_Pi_Trace, id.vars = "SweepNumber"))
+many.pop.plots <- lapply(names(melty.pops), function(a) {
+  z <- melty.pops[[a]]
+  ggplot(z, aes(x = variable, y = value, fill = variable)) + geom_boxplot() + ggtitle(a) + coord_flip()
+})
+many.pop.plots[[5]]  # look at one of them
+
+# 2.4 And here is the same thing for reporting units:
+melty.reps <- lapply(bb1$bycatch_output, function(x) melt(x$Pi_Trace, id.vars = "SweepNumber"))
+many.rep.plots <- lapply(names(melty.reps), function(a) {
+  z <- melty.reps[[a]]
+  ggplot(z, aes(x = variable, y = value, fill = variable)) + geom_boxplot() + ggtitle(a) + coord_flip()
+})
+many.rep.plots[[5]]  # look at one of them
+
+
+# 2.5 Here is the lumped result by population:
+lumpy.pop.pi.trace.melt  <- melt(bb1$bycatch_lumped_together$All_Strata_Lumped$pop_Pi_Trace, id.vars = "SweepNumber")
+ggplot(lumpy.pop.pi.trace.melt, aes(x=variable, y=value, fill = variable)) + geom_boxplot() + ggtitle("BB Bycatch lumped and by population")
+
+
+# here let's make boxplots by population but color them by the reporting unit:
+ru <- bb1$baseline_assessment$rep_units  # these are the reporting unit factors
+names(ru) <- levels(bb1$baseline_assessment$the.pops.f)  # give them names for converting pops to rep units
+newdf <- cbind(lumpy.pop.pi.trace.melt, repu = ru[as.character(lumpy.pop.pi.trace.melt$variable)])
+newdf$variable <- factor(newdf$variable, levels = rev(levels(newdf$variable)))
+ggplot(newdf, aes(x=variable, y=value, colour = repu, fill = repu)) + geom_boxplot(outlier.colour = NULL) + geom_boxplot(outlier.colour = NA, colour = "black") + ggtitle("BB Bycatch lumped and by population")  + coord_flip() 
+
+
 # So, from that it should be clear how all the info for the figures Dan made was extracted.
+
+
+
+#### Running GSI_SIM on all the bycatch unstratified ####
 
 
 #### Comparing Zscores for bycatch fish to the baseline fish ####

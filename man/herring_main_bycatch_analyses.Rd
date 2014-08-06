@@ -4,7 +4,8 @@
 \title{all the bycatch related steps wrapped up in this function}
 \usage{
 herring_main_bycatch_analyses(bycatch_path, bycatch_locus_columns, baseline.df,
-  rep_unit_path)
+  rep_unit_path, stratifyOn = c("Year", "Season", "Region", "Target.Fishery",
+  "Gear.Type"))
 }
 \description{
 I am going to add parameters and stuff to this later.  Just kine of a stub at this point.

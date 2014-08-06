@@ -23,7 +23,12 @@ read_and_stratify_bycatch <- function(bycatch_path,
   names(x)[bycatch_locus_columns][c(F,T)] <- names(x)[bycatch_locus_columns][c(T,F)]
   
   # split it into a list of data frames
-  xs <- split(x, x[stratifyOn])
+  if(length(stratifyOn > 0)) {
+    xs <- split(x, x[stratifyOn])
+  }
+  else {
+    xs <- list(All_Strata_Lumped = x)
+  }
               
   # retain only those having enough observations and return
   xs[sapply(xs, nrow) >= dropBelow]
