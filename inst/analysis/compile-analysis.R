@@ -80,12 +80,47 @@ lumpy.pop.pi.trace.melt  <- melt(bb1$bycatch_lumped_together$All_Strata_Lumped$p
 ggplot(lumpy.pop.pi.trace.melt, aes(x=variable, y=value, fill = variable)) + geom_boxplot() + ggtitle("BB Bycatch lumped and by population")
 
 
-# here let's make boxplots by population but color them by the reporting unit:
+# here let's make boxplots and color them by the reporting unit:
+# here are some layers, saved in a list, to make boxplots
+boxp_layers <- list(
+  geom_boxplot(outlier.colour = NULL),
+  coord_flip(),
+  scale_color_manual(values = c("red", "blue", "green", "yellow")), 
+  scale_fill_manual(values = c("red", "blue", "green", "yellow"))
+)
+
+# here we make boxplots for each population
 ru <- bb1$baseline_assessment$rep_units  # these are the reporting unit factors
 names(ru) <- levels(bb1$baseline_assessment$the.pops.f)  # give them names for converting pops to rep units
 newdf <- cbind(lumpy.pop.pi.trace.melt, repu = ru[as.character(lumpy.pop.pi.trace.melt$variable)])
-newdf$variable <- factor(newdf$variable, levels = rev(levels(newdf$variable)))
-ggplot(newdf, aes(x=variable, y=value, colour = repu, fill = repu)) + geom_boxplot(outlier.colour = NULL) + geom_boxplot(outlier.colour = NA, colour = "black") + ggtitle("BB Bycatch lumped and by population")  + coord_flip() 
+newdf$variable <- factor(newdf$variable, levels = rev(levels(newdf$variable)))  # reverse their order so they plot North to South
+
+# save a ggplot of that and put some black lines on it
+p <- ggplot(newdf, aes(x=variable, y=value, color = repu, fill = repu)) + 
+  boxp_layers + 
+  geom_boxplot(outlier.colour = NA, colour = "black")
+  
+
+# Now make a boxplot of the repunits total to inset into a little window
+lumpy.pi.trace.melt$variable <- factor(lumpy.pi.trace.melt$variable, levels = rev(levels(lumpy.pi.trace.melt$variable)))
+# this plot doesn't get any black lines because it is already pretty compressed
+q <- ggplot(lumpy.pi.trace.melt,aes(x=variable, y = value, fill=variable, color = variable)) + boxp_layers
+
+print(p)  # make the population plot
+vp <- viewport(width = 0.5, height = 0.33, x = 0.35, y = 0.06, just = c("left", "bottom"))
+print(q, vp = vp)
+
+#Any old plot
+a_plot <- ggplot(cars, aes(speed, dist)) + geom_line()
+
+#A viewport taking up a fraction of the plot area
+vp <- viewport(width = 0.4, height = 0.4, x = 0.8, y = 0.2)
+
+#Just draw the plot twice
+png("test.png")
+print(a_plot)
+print(a_plot, vp = vp)
+dev.off()
 
 
 # So, from that it should be clear how all the info for the figures Dan made was extracted.
