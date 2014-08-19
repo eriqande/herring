@@ -1,4 +1,4 @@
-
+library(herring)
 
 # quick script to do the mixture simulations and make some plots
 bbs <- blueback_run_settings()

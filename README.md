@@ -37,7 +37,7 @@ install_github("gpiper", username = "eriqande", ref = "3d5a6b5888")
 # pdf()  # If running on a remote system without windowing, uncomment this line so the plots don't fail (Note, it won't make all of them pdf!)
 
 # first, let's do the mixture simulations:
-source(system.file("analysis/mixture_simulations.R", package = "herring"))
+source(system.file("analysis/mixture-simulations.R", package = "herring"))
 
 # that should run in about 2 minutes and will produce the files:
 # {alewife,blueback}_{repu,pop}_mix_sim.pdf
