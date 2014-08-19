@@ -88,7 +88,7 @@ print(q, vp = vp) # put the repu in a little window
 
 
 # make faceted boxplots of the stratum results
-df <- ldply(melty.pops, data.frame)
+df <- ldply(bb.pi.pop.lump, data.frame)  # THIS IS CURRENTLY BUGGY.
 dfl <- df[sample(nrow(df), 100000),]  # use just a subset of the data for now
 dfl$repu <- ru[as.character(dfl$variable)]
 dfl$ord.var <- factor(dfl$variable, levels=rev(levels(dfl$variable)))

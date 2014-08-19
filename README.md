@@ -30,11 +30,22 @@ library(devtools)  # load this library.  If you don't have it: install.packages(
 install_github("herring", username = "eriqande")
 
 # install the R package "gpiper" that is also needed
-install_github("gpiper", username = "eriqande", ref = "36be155a")
+install_github("gpiper", username = "eriqande", ref = "3d5a6b5888")
 
 
-# then source the analysis file like this:
+# then source the analysis files like this:
 # pdf()  # If running on a remote system without windowing, uncomment this line so the plots don't fail (Note, it won't make all of them pdf!)
+
+# first, let's do the mixture simulations:
+source(system.file("analysis/mixture_simulations.R", package = "herring"))
+
+# that should run in about 2 minutes and will produce the files:
+# {alewife,blueback}_{repu,pop}_mix_sim.pdf
+# which are four fairly self-explanatory faceted scatter plots.
+
+
+
+# then, let's do all the rest of the analyses:
 source(system.file("analysis/compile-analysis.R", package = "herring"))
 
 # that will end up running a fairly long time (30 to 60 minutes, maybe)because it does multiple runs of the chains 
