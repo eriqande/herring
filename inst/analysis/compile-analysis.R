@@ -17,7 +17,7 @@ library(ggplot2)
 library(grid)
 library(plyr)
 
-#### Do the self-assignment analyses and the GSI once on blueback and herring  ####
+#### Do the self-assignment analyses and the GSI once on blueback herring and alewife  ####
 message("Doing self-assignment and GSI one time")
 #  bb is "blueback" and "aa" is alewife
 bb1 <- do.call(herring_all_analyses, args = blueback_run_settings())  # first run
@@ -39,6 +39,29 @@ aa1 <- do.call(herring_all_analyses, args = alewife_run_settings())  # first run
 # The ones that don't start with "pop" are results from Reporting Units and the ones that do are
 # results from populations in the baseline.
 
+
+message ("Examine posterior probability of assignments for each bycatch strata and estimate 95% CI")
+# this function takes one component of a list
+# like bb1$bycatch_output, and squashes into a data frame
+# row with the mean and the 95% quantiles. Change what to
+# make it grab the pop_pi_traces if you want.
+get_means_and_quants <- function(L, what = "Pi_Trace") {
+  sapply(L[[what]], function(x) c(mean = mean(x), quantile(x, probs=c(0.025, 0.975) )))
+}
+
+tmp <- lapply(bb1$bycatch_output, function(x) {
+  y <- get_means_and_quants(x);
+  z <- data.frame(stat = rownames(y), y, stringsAsFactors = FALSE)
+  })
+
+
+stat.frame <- ldply(tmp)
+
+bbstrata <- bb1$bycatch_output[[1]]
+lapply(bb1$bycatch_output, function(bbstrata) sapply(bbstrata$Pi_Trace, mean))
+lapply(bb1$bycatch_output, function(bbstrata) sapply(bbstrata$Pi_Trace, quantile, probs=c(0.025, 0.975)))
+
+  
 message("Making plots to show how to access lists")
 # So, here are some examples of how we would access these:
 
