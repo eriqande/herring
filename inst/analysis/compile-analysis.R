@@ -65,7 +65,7 @@ bycatch_prop_table <- function(BOR = bb1$bycatch_output, CSV = "blueback_bycatch
   stat.frame <- ldply(tmp)
   
   sfm <- as.matrix(stat.frame[, -(1:3)])
-  sfm[] <- sprintf("%0.3f", sfm)
+  sfm[] <- sprintf("%0.4f", sfm)
   for(i in seq(2, nrow(sfm), by=3)) {
     sfm[i, ] <- paste("(", sfm[i,], "--", sfm[i+1, ], ")", sep = "")
   }
