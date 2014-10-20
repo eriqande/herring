@@ -1,0 +1,17 @@
+2012.Winter.South New England 611.Atlantic Herring.
+2012.Winter.South New England 539.Atlantic Herring.Bottom Otter Trawl
+2013.Winter.South New England 539.Atlantic Herring.Bottom Otter Trawl
+2012.Winter.South New England 539/611.Atlantic Herring.Bottom Otter Trawl
+2013.Winter.South New England 539/611.Atlantic Herring.Bottom Otter Trawl
+2013.Winter.South New England 539.Atlantic Herring.Midwater Otter Trawl
+2013.Winter.Unknown.Atlantic Herring.Midwater Otter Trawl
+2012.Winter.Cape Cod.Atlantic Herring.Midwater Otter Trawl Paired
+2013.Winter.Cape Cod.Atlantic Herring.Midwater Otter Trawl Paired
+2011.Fall.Gulf of Maine.Atlantic Herring.Midwater Otter Trawl Paired
+2012.Fall.Gulf of Maine.Atlantic Herring.Midwater Otter Trawl Paired
+2012.Winter.New Jersey Long Island.Atlantic Herring.Midwater Otter Trawl Paired
+2013.Winter.New Jersey Long Island.Atlantic Herring.Midwater Otter Trawl Paired
+2012.Winter.South New England 539.Atlantic Herring.Midwater Otter Trawl Paired
+2013.Winter.South New England 539.Atlantic Herring.Midwater Otter Trawl Paired
+2012.Winter.South New England 539/611.Atlantic Herring.Midwater Otter Trawl Paired
+2012.Winter.South New England 611.Atlantic Herring.Midwater Otter Trawl Paired

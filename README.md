@@ -24,13 +24,13 @@ See TERMS.md for more information.
 ## Replicating our results
 This repository is designed so that our results can be replicated easily.  Here are the commands that you would use at an R prompt to do that:
 ```r
-library(devtools)  # load this library.  If you don't have it: install.packages("devtools")
+#  If you don't have devtools package, install it: install.packages("devtools")
 
 # install the R-package that is this library
-install_github("herring", username = "eriqande")
+devtools::install_github("eriqande/herring")
 
 # install the R package "gpiper" that is also needed
-install_github("gpiper", username = "eriqande", ref = "3d5a6b5888")
+devtools::install_github("eriqande/gpiper", ref = "3d5a6b5888")
 
 
 # then source the analysis files like this:
