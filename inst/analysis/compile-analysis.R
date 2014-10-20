@@ -48,19 +48,38 @@ get_means_and_quants <- function(L, what = "Pi_Trace") {
   sapply(L[[what]], function(x) c(mean = mean(x), quantile(x, probs=c(0.025, 0.975) )))
 }
 
-tmp <- lapply(bb1$bycatch_output, function(x) {
-  y <- get_means_and_quants(x);
-  z <- data.frame(stat = rownames(y), y, stringsAsFactors = FALSE)
+# this function takes a bycatch output result BOR and the name of the csv file that
+# has the strata in a manner that can be ordered, and makes a table of it
+bycatch_prop_table <- function(BOR = bb1$bycatch_output, CSV = "blueback_bycatch_strata.csv") { 
+  tmp <- lapply(BOR, function(x) {
+    y <- get_means_and_quants(x);
+    z <- data.frame(stat = rownames(y), y, stringsAsFactors = FALSE)
   })
-
-
-stat.frame <- ldply(tmp)
-
-bbstrata <- bb1$bycatch_output[[1]]
-lapply(bb1$bycatch_output, function(bbstrata) sapply(bbstrata$Pi_Trace, mean))
-lapply(bb1$bycatch_output, function(bbstrata) sapply(bbstrata$Pi_Trace, quantile, probs=c(0.025, 0.975)))
-
   
+  # get the order that we want to put those strata into:
+  strat_nums <- read.csv(file.path(system.file("data_files", package = "herring", mustWork = T), CSV),
+                            header=F, stringsAsFactors = FALSE)
+  
+  # reorder strata the way we want them
+  tmp <- tmp[strat_nums$V2[order(strat_nums$V1)]]
+  stat.frame <- ldply(tmp)
+  
+  sfm <- as.matrix(stat.frame[, -(1:3)])
+  sfm[] <- sprintf("%0.3f", sfm)
+  for(i in seq(2, nrow(sfm), by=3)) {
+    sfm[i, ] <- paste("(", sfm[i,], "--", sfm[i+1, ], ")", sep = "")
+  }
+  sfm <- sfm[c(T, T, F), ]
+  
+  fin <- data.frame(Stratum = stat.frame$".id"[c(T, T, F)], sfm)
+  
+  write.csv(fin, file = gsub("\\.csv$", replacement = "_stats.csv", x = CSV), row.names = F)
+}
+
+# print out some tables to csv files:
+bycatch_prop_table(BOR = bb1$bycatch_output, CSV = "blueback_bycatch_strata.csv")
+bycatch_prop_table(BOR = aa1$bycatch_output, CSV = "alewife_bycatch_strata.csv")
+
 message("Making plots to show how to access lists")
 # So, here are some examples of how we would access these:
 
