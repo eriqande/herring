@@ -24,7 +24,6 @@ bb1 <- do.call(herring_all_analyses, args = blueback_run_settings())  # first ru
 aa1 <- do.call(herring_all_analyses, args = alewife_run_settings())  # first run
 
 
-
 #### Now let us investigate how we parse results out of these output lists ####
 # First, it will be good to review what the structure of bb1 and aa1 are at this juncture.  We
 # will use bb1 as an example, but aa1 is structured the same way.
@@ -99,11 +98,6 @@ t <- ggplot(dfl, aes(x = ord.var, y = value, fill = repu, color = repu)) +
   scale_fill_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
   scale_color_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
   coord_flip()
-
-
-
-
-
 
 
 #### Running GSI_SIM on all the bycatch unstratified ####
