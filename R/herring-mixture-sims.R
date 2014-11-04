@@ -1,7 +1,7 @@
 
 #' Do the mixture simulations and make some nice ggplots of the results
 #' 
-#' Quickly through this together
+#' Quickly threw this together
 #' @inheritParams herring_csv2gpiper
 #' @param rep_unit_path  Path to the reporting unit file
 #' @param plot_prefix    Prefix to put on the plot names 
@@ -79,7 +79,7 @@ herring_mixture_sims <- function(baseline_path, lat_long_path, locus_columns, re
     xlab("True (Simulated) Mixing Proportion") +
     ylab("Estimated Mixing Proportion") + 
     ggtitle(paste(plot_prefix, "simulated mixing proportions estimated by reporting unit"))
-  repu_plot <- g + facet_wrap( ~ Repu)
+  repu_plot <- g + theme_bw() + facet_wrap( ~ Repu)
   ggsave(filename = paste(plot_prefix, "_repu_mix_sim.pdf", sep = ""), repu_plot, width = 8, height = 8)
   
   # and here by population
@@ -90,7 +90,7 @@ herring_mixture_sims <- function(baseline_path, lat_long_path, locus_columns, re
     xlab("True (Simulated) Mixing Proportion") +
     ylab("Estimated Mixing Proportion") + 
     ggtitle(paste(plot_prefix, "simulated mixing proportions estimated by population"))
-  pop_plot <- p + facet_wrap( ~ Pop)
+  pop_plot <- p + theme_bw() + facet_wrap( ~ Pop) 
   ggsave(filename = paste(plot_prefix, "_pop_mix_sim.pdf", sep = ""), pop_plot, width = 10, height = 10)
   
   # haven't put the truth on there yet.

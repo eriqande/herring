@@ -33,6 +33,6 @@ See file alewife-lat-long.txt for an example.}
 that you want to use.  Should be twice as many columns as loci.  In alewife-baseline.csv this is}
 }
 \description{
-Quickly through this together
+Quickly threw this together
 }
 

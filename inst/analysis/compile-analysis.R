@@ -22,6 +22,8 @@ message("Doing self-assignment and GSI one time")
 #  bb is "blueback" and "aa" is alewife
 bb1 <- do.call(herring_all_analyses, args = blueback_run_settings())  # first run
 aa1 <- do.call(herring_all_analyses, args = alewife_run_settings())  # first run
+# for development, Eric can get bb1-like and aa1-like output fast like this:
+#   load("bb1_for_devel.rda"); load("aa1_for_devel.rda");
 
 
 #### Now let us investigate how we parse results out of these output lists ####
