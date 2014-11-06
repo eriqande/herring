@@ -161,14 +161,17 @@ gsi_Run_gsi_sim(arg.string = "-b gsi_sim_file.txt --self-assign --base-logl-sims
 bb1.base.zscores <- read.table("baseline_logl_summary.txt", header = T)
 
 # 3. Now merge those two together and then melt it so we can use ggplot
-bb1.bc.zs$Place  <- "MIX"
-bb1.base.zscores$Place <- "BASE"
+bb1.bc.zs$Place  <- "Bycatch"
+bb1.base.zscores$Place <- "Baseline"
 zmelt <- melt(rbind(bb1.bc.zs[c("Place", "zScore")], bb1.base.zscores[c("Place", "zScore")]), id.vars = "Place")
 
 # 4. And then plot them in various ways:
-ggplot(zmelt, aes(x = value, fill = Place)) + geom_density(alpha = 0.25)  # density plot
 bb_zhists <- ggplot(zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) # histograms
 ggsave("blueback_zhists.pdf", bb_zhists)
+
+bb_zhists2<-ggplot(zmelt, aes(x = value, fill = Place)) + geom_density(alpha = 0.25) + theme_bw() +
+  xlab("Z-score (-log-likelihood)") + ylab("Density") + theme(legend.title=element_blank())  # density plot
+ggsave("blueback_zhists2.pdf", bb_zhists2)
 
 
 # 5. Now do all the same stuff for alewife:
@@ -176,12 +179,16 @@ aa1.bc.zs <- do.call(rbind, lapply(aa1$bycatch_output, function(x) x$Zscores))
 aa1.baseline.pops <- make_baseline_file(aa1$baseline_assessment$baseline)  # this makes gsi_sim_file.txt 
 gsi_Run_gsi_sim(arg.string = "-b gsi_sim_file.txt --self-assign --base-logl-sims 2500 0")
 aa1.base.zscores <- read.table("baseline_logl_summary.txt", header = T)
-aa1.bc.zs$Place  <- "MIX"
-aa1.base.zscores$Place <- "BASE"
+aa1.bc.zs$Place  <- "Bycatch"
+aa1.base.zscores$Place <- "Baseline"
 aa_zmelt <- melt(rbind(aa1.bc.zs[c("Place", "zScore")], aa1.base.zscores[c("Place", "zScore")]), id.vars = "Place")
-aa_zhists <- ggplot(aa_zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) # histograms
+aa_zhists <- ggplot(aa_zmelt, aes(x = value, fill = Place)) + geom_histogram() + facet_wrap(~Place, nrow=2) +
+  xlab("Z-score (-log-likelihood)") +
+  ylab("Density")  # histograms
 ggsave("alewife_zhists.pdf", aa_zhists)
-
+aa_zhists2<-ggplot(aa_zmelt, aes(x = value, fill = Place)) + geom_density(alpha = 0.25) + theme_bw() +
+  xlab("Z-score (-log-likelihood)") + ylab("Density") + theme(legend.title=element_blank())  # density plot
+ggsave("alewife_zhists2.pdf", aa_zhists2)
 
 
 
