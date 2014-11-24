@@ -129,6 +129,21 @@ vp <- viewport(width = 0.5, height = 0.33, x = 0.35, y = 0.06, just = c("left", 
 print(q, vp = vp) # put the repu in a little window
 
 
+# here is a nice violin plot of the overall mixing proportions:
+ggplot(bb.pi.lump, aes(x = ord.variable, y = value, fill = ord.variable)) + 
+  geom_violin() + 
+  coord_flip() + 
+  scale_fill_manual(name = "Reporting Units", values = rev(c("red", "blue", "green", "yellow")))
+
+# here are the 95% credible intervals and the posterior means the reporting unit
+# mixing proportions when all the strata are lumped together
+# alewife
+get_means_and_quants(aa1$bycatch_lumped_together$All_Strata_Lumped)
+
+# blueback
+get_means_and_quants(bb1$bycatch_lumped_together$All_Strata_Lumped)
+
+
 
 # make faceted boxplots of the stratum results
 df <- ldply(bb.pi.pop.lump, data.frame)  # THIS IS CURRENTLY BUGGY.
