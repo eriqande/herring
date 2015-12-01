@@ -145,18 +145,6 @@ get_means_and_quants(bb1$bycatch_lumped_together$All_Strata_Lumped)
 
 
 
-# make faceted boxplots of the stratum results
-df <- ldply(bb.pi.pop.lump, data.frame)  # THIS IS CURRENTLY BUGGY.
-dfl <- df[sample(nrow(df), 100000),]  # use just a subset of the data for now
-dfl$repu <- ru[as.character(dfl$variable)]
-dfl$ord.var <- factor(dfl$variable, levels=rev(levels(dfl$variable)))
-t <- ggplot(dfl, aes(x = ord.var, y = value, fill = repu, color = repu)) + 
-  geom_boxplot(outlier.colour = NULL, outlier.size = 0.62) + 
-  geom_boxplot(outlier.colour = NA, color = "black") +
-  facet_wrap( ~ .id, ncol=5) + 
-  scale_fill_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
-  scale_color_manual(name = "Reporting Units", values = c("red", "blue", "green", "yellow")) +
-  coord_flip()
 
 
 #### Running GSI_SIM on all the bycatch unstratified ####
