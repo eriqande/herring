@@ -38,11 +38,11 @@ devtools::install_github("eriqande/herring")
 ```
 
 ### To install the packages from Dryad:
-You need to get the files `herring_0.0.1.tgz` and `gpiper_0.1.tgz` from 
+You need to get the files `herring_0.0.1.tar.gz` and `gpiper_0.1.tar.gz` from 
 Dryad and then do:
 ```r
-install.packages("path-to-herring_0.0.1.tgz", repos = NULL, dependencies = TRUE)
-install.packages("path-to-gpiper_0.1.tgz", repos = NULL, dependencies = TRUE)
+install.packages("path-to-herring_0.0.1.tar.gz", repos = NULL, dependencies = TRUE, type = "source")
+install.packages("path-to-gpiper_0.1.tar.gz", repos = NULL, dependencies = TRUE, type = "source")
 ```
 where you replace the paths with the paths that point to the files on your computer.
 
